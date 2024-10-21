@@ -1,58 +1,28 @@
+# In the Form1 script in Anvil
+
 from ._anvil_designer import Form1Template
-import anvil.server
+from anvil import *
 
 class Form1(Form1Template):
+  def __init__(self, **properties):
+    self.init_components(**properties)
+    self.questions = [
+      {"question": "What is the capital of France?", "choices": ["Paris", "London", "Berlin"], "answer": "Paris"},
+      {"question": "What is 2 + 2?", "choices": ["3", "4", "5"], "answer": "4"},
+      {"question": "What is the capital of Japan?", "choices": ["Tokyo", "Beijing", "Seoul"], "answer": "Tokyo"}
+    ]
+    self.current_question = 0
+    self.score = 0
+    self.show_question()
 
-    def __init__(self, **properties):
-        self.init_components(**properties)
-        self.question_index = 0
-        self.score = 0
-        self.questions = anvil.server.call('get_questions')
-        self.user_id = "example_user_id"
-        self.display_question()
-
-
-    def display_question(self):
-        if self.question_index < len(self.questions):
-            q = self.questions[self.question_index]
-            self.label_question.text = q['question']
-            self.radio_button_1.text = q['choices'][0]
-            self.radio_button_2.text = q['choices'][1]
-            self.radio_button_3.text = q['choices'][2]
-            self.radio_button_4.text = q['choices'][3]
-            self.label_score.text = f"Score: {self.score}"
-        else:
-            self.label_question.text = f"Quiz Complete! Your final score: {self.score}"
-
-    def button_submit_click(self, **event_args):
-        q = self.questions[self.question_index]
-        selected_choice = self.radio_button_group.selected_value
-        if selected_choice == q['answer']:
-            self.score += 1
-            print(self.score)
-        self.question_index += 1
-        self.display_question()
-                
-
-    def radio_button_clicked(self, **event_args):
-        pass
-
-    def button_1_click(self, **event_args):
-      """This method is called when the button is clicked"""
-      pass
-
-    def radio_button_1_clicked(self, **event_args):
-      """This method is called when this radio button is selected"""
-      pass
-
-    def radio_button_2_clicked(self, **event_args):
-      """This method is called when this radio button is selected"""
-      pass
-
-    def radio_button_3_clicked(self, **event_args):
-      """This method is called when this radio button is selected"""
-      pass
-
-    def radio_button_4_clicked(self, **event_args):
-      """This method is called when this radio button is selected"""
-      pass
+  def button_submit_click(self, **event_args):
+    selected = self.radio_group_answers.selected_value
+    if selected == self.questions[self.current_question]["answer"]:
+      self.score += 1
+    self.current_question += 1
+    if self.current_question < len(self.questions):
+      self.show_question()
+    else:
+      self.label_question.text = f"Quiz finished! Your score is {self.score} out of {len(self.questions)}."
+      self.radio_group_answers.items = []
+      self.button_submit.enabled = False
