@@ -11,9 +11,6 @@ class Form1(Form1Template):
       {"question": "What is 2 + 2?", "choices": ["3", "4", "5"], "answer": "4"},
       {"question": "What is the capital of Japan?", "choices": ["Tokyo", "Beijing", "Seoul"], "answer": "Tokyo"}
     ]
-    self.current_question = 0
-    self.score = 0
-    self.show_question()
 
   def button_submit_click(self, **event_args):
     selected = self.radio_group_answers.selected_value
